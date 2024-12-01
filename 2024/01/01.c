@@ -31,6 +31,7 @@ int main() {
     int *list_a = malloc(sizeof(int)*NLINES);
     int *list_b = malloc(sizeof(int)*NLINES);
 
+    /* #### Part One #### */
     for (int i = 0; i < NLINES; i++) {
         fgets(input_line, LINELEN, fptr);
         /* 0 1 2 3 4 5 6 7 8 9 10 11 12 13
@@ -70,10 +71,25 @@ int main() {
 
     int ans = 0;
     for (int i = 0; i < NLINES; i++) {
-        printf("%3d: %d   %d\n", i, list_a[i], list_b[i]);
+        //printf("%3d: %d   %d\n", i, list_a[i], list_b[i]);
         ans += abs(list_a[i] - list_b[i]);
     }
-    printf("Answer: %d", ans);
+    printf("Answer 1: %d\n", ans);
+
+    /* #### Part Two #### */
+    ans = 0;
+    for (int i = 0; i < NLINES; i++) {
+        int count = 0;
+        for (int j = 0; j < NLINES; j++) {
+            if (list_a[i] == list_b[j]) {
+                count++;
+            } else if (count > 0) {
+                break;
+            }
+        }
+        ans += list_a[i] * count;
+    }
+    printf("Answer 2: %d\n", ans);
     
     free(list_a);
     free(list_b);
