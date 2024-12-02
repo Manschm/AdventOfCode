@@ -12,6 +12,9 @@
 #define NLINES 1000
 #define LINELEN 30
 
+int check_series(int* series, int length);
+
+
 int main() {
     FILE *fptr;
     fptr = fopen("input.txt", "r");
@@ -26,18 +29,17 @@ int main() {
 
     for (int i = 0; i < NLINES; i++) {
         fgets(input_line, LINELEN, fptr);
-        printf("%3d: %s", i, input_line);
         
-        /* #### Part One #### */
-        int j = 0;
-        int k = 0;
-        int prev_num = 100;
-        int new_num;
-        int diff;
-        int old_diff = 0;
-        int dir;
+        /* #### Part One/Two #### */
+        
+        int digit_count = 0;
+        int num_idx = 0;
+        int num;
+        int nums[8] = {0};
 
         //printf("%3d: ", i);
+        int j = 0;
+        nums[0] = 100;
         while (j < LINELEN) {
             char c = input_line[j];
             j++;
@@ -45,55 +47,86 @@ int main() {
             {
             case '\n':
             case '\0':
-            case ' ':   // space
-                k = 0;
-                if (prev_num == 100) {
-                    prev_num = new_num;
-                    //printf(" ");
+            case ' ': // end of number
+                digit_count = 0;
+
+                if (nums[0] == 100) {  // save first number
+                    nums[0] = num;
+                    num_idx++;
                     continue;
                 }
-                //printf(" |%2d-%2d=", prev_num, new_num);
-
-                prev_num -= new_num;
-                if (prev_num < 0 && prev_num >= -3) {
-                    //printf("%d|", prev_num);
-                    diff = -1;
-                } else if (prev_num > 0 && prev_num <= 3) {
-                    //printf("+%d|", prev_num);
-                    diff = 1;
-                } else {
-                    break; // quit loop
-                }
-                prev_num = new_num;
-
-                if (old_diff != 0 && old_diff != diff) {
-                    break; // quit loop
-                }
-                old_diff = diff;
 
                 if (c == '\n' || c == '\0') {
-                    ans++;
                     break;
                 }
-                //printf(" ");
                 continue;
 
             default:
-                //printf("%c", c);
-                if (k == 0) {
-                    new_num = 0;
+                if (digit_count == 0) {
+                    num = 0;
                 }
-                new_num = (c - 0x30) + new_num * 10;
-                k++;
+                num = (c - 0x30) + num * 10;
+                digit_count++;
                 continue;
             }
             break;
         }
-        //printf("\n");
+
+        int errs = check_series(nums, num_idx);
+        if (errs == 0) {
+            ans++;
+            continue;
+        } else if (errs > 1) {
+            continue;
+        }
+
+        int old_diff = 0;
+        for (int i=1; i<num_idx; i++) {
+            int diff = nums[i-1] - nums[i];
+            int diffdir = (diff > 0) - (diff < 0);
+ 
+            if (i == 1) {
+                old_diff = diffdir;
+            }
+
+            if (diff == 0 || diff < -3 || diff > 3 || old_diff != diffdir) {
+                nerr++;
+                if (err_idx > 0 && i - err_idx == 1) {
+                    nerr--;
+                } else {
+                    err_idx = i;
+                }
+            }
+        }
+        
     }
     fclose(fptr);
 
     printf("Answer 1: %d\n", ans);
 
     return 0;
+}
+
+int check_series(int* series, int length) {
+    int old_diff = 0;
+    int nerr = 0;
+    int err_idx = -1;
+    for (int i=1; i<length; i++) {
+        int diff = series[i-1] - series[i];
+        int diffdir = (diff > 0) - (diff < 0);
+
+        if (i == 1) {
+            old_diff = diffdir;
+        }
+
+        if (diff == 0 || diff < -3 || diff > 3 || old_diff != diffdir) {
+            nerr++;
+            if (err_idx > 0 && i - err_idx == 1) {
+                nerr--;
+            } else {
+                err_idx = i;
+            }
+        }
+    }
+    return nerr;
 }
