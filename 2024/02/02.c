@@ -175,6 +175,7 @@ int check_series(int* series, int length, int* err_series, char print) {
                 printf("%d ", series[i-1]);
             }
         }
+        old_diff = diffdir;
     }
     if (print) {
         printf("%d\t", series[length-1]);
