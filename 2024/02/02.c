@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define NFALSE 58
+int false_lut[] = {5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 94, 104, 119, 130, 137, 138, 142, 143, 149, 159, 228, 248, 250, 270, 292, 313};
+int true_lut[] = {0, 1, 2, 3, 4, 9, 20, 49, 74, 79, 99, 124, 125, 126, 127, 128, 133, 198, 223, 249, 252, 256, 259, 262, 278, 284, 326};
+
 // in total there are 1000 lines (line 1001 is empty)
 // a line has at max. 8 numbers
 // numbers are either one or two digits long
@@ -13,6 +17,7 @@
 #define LINELEN 30
 
 int check_series(int* series, int length, int* err_series, char print);
+int check_series2(int* series, int length, unsigned char* flags, int* flag_count);
 
 int err_list[8];
 int list_a[8];
@@ -78,14 +83,18 @@ int main() {
             break;
         }
 
-        int errs = check_series(nums, num_idx, err_list, 0);
-        if (errs == 0) {
+        //int errs = check_series(nums, num_idx, err_list, 0);
+        unsigned char flags[8];
+        int nerrs = 0;
+        int check = check_series2(nums, num_idx, flags, &nerrs);
+        if (nerrs == 0 && check != 0) {
             ans1++;
-            continue;
-
-        } else if (errs > 1) {
-            printf("\n%3d: ", i);
-            check_series(nums, num_idx, err_list, 1);
+            for (int lut_idx = 0; lut_idx < NFALSE; lut_idx++) {
+                if (i == false_lut[lut_idx]) {
+                    printf("\nERROR: %d is a false positive!\n", i);
+                    return 1;
+                }
+            }
             continue;
         }
 
@@ -139,7 +148,76 @@ int main() {
     return 0;
 }
 
+// 79: 27 31 29 32 33 36 49 40
 // 49: 30 30 31 32 35 38 41
+int check_series2(int* series, int length, unsigned char* flags, int* flag_count) {
+    int diffsum = 0;
+    char dupes = 0;
+    flags[0] = 0;   // 0: dupe, 1: rising, 2: falling
+    int rise_count = 0;
+    int fall_count = 0;
+    int flag_count_int = 0;
+
+    for (int i=1; i<length; i++) {
+        flags[i] = 0;
+        int diff = series[i-1] - series[i];
+        diffsum += (diff > 0) - (diff < 0);
+
+        if (diff == 0) {
+            dupes++;
+            if (dupes > 1) {
+                return 0;   // too many dupes
+            }
+            flags[i]    |= 0x01;    // dupe
+            flag_count_int++;
+
+        } else if (diff > 3) {
+            flags[i-1]  |= 0x02;
+            flags[i]    |= 0x02;
+            flag_count_int++;
+
+            if (dupes > 1) {
+                return 0;   // too many dupes
+            }
+
+            rise_count++;
+            fall_count = 0;
+            if (rise_count > 1) {
+                return 0;   // too many faults
+            }
+
+        } else if (diff < -3) {
+            flags[i-1]  |= 0x04;
+            flags[i]    |= 0x04;
+            flag_count_int++;
+
+            if (dupes > 1) {
+                return 0;   // too many dupes
+            }
+
+            rise_count = 0;
+            fall_count++;
+            if (fall_count > 1) {
+                return 0; // too many faults
+            }
+        }
+    }
+    *flag_count = flag_count_int;
+
+    if (length - abs(diffsum) == 1) {   // all values rise in the same direction
+        if ((diffsum > 0) - (diffsum < 0)) {
+            return 2;
+        }
+        return -2;
+    } else if (length - abs(diffsum) > 2) {
+        return 0;   // too many up and downs
+    } else if ((diffsum > 0) - (diffsum < 0)) {
+        return 1;   // values tend to grow
+    } else{
+        return -1; // values tend to fall
+    }
+}
+
 int check_series(int* series, int length, int* err_series, char print) {
     int old_diff = 0;
     int nerr = 0;
