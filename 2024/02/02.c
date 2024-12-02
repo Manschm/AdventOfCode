@@ -84,14 +84,14 @@ int main() {
         }
 
         //int errs = check_series(nums, num_idx, err_list, 0);
-        unsigned char flags[8];
-        int nerrs = 0;
-        int check = check_series2(nums, num_idx, flags, &nerrs);
-        if (nerrs == 0 && check != 0) {
+        unsigned char og_flags[8];
+        int og_nerrs = 0;
+        int og_check = check_series2(nums, num_idx, og_flags, &og_nerrs);
+        if (og_nerrs == 0 && og_check != 0) {
             ans1++;
             for (int lut_idx = 0; lut_idx < NFALSE; lut_idx++) {
                 if (i == false_lut[lut_idx]) {
-                    printf("\nERROR: %d is a false positive!\n", i);
+                    printf("\nT1 ERROR: %d is a false positive!\n", i);
                     return 1;
                 }
             }
@@ -101,10 +101,10 @@ int main() {
         /* printf("\n%d,", i);
         for (j=0; j<num_idx; j++) {
             printf("%d,", err_list[j]);
-        } */
-
+        }
+        */
         
-        int new_j = 0;
+        /* int new_j = 0;
         for (j=0; j<num_idx; j++) {
             if (err_list[j] == 1) {
                 if (err_list[j+1] == 1) {
@@ -125,21 +125,124 @@ int main() {
             }
             new_j++;
         }
+        */
+
+        // deduping
+        int new_j = 0;
+        for (j = 0; j < num_idx; j++) {
+            if (og_flags[j] & 0x01 != 0) {
+                j++;    // skip dupe
+                list_a[new_j] = nums[j];
+            } else {
+                list_a[new_j] = nums[j];
+            }
+            new_j++;
+        }
+
+        unsigned char flags[8];
+        int nerrs = 0;
+        int check = check_series2(list_a, new_j, flags, &nerrs);
+        if (nerrs == 0 && check != 0) {
+            ans2++;
+            printf("\n%3da: %s", i, input_line);
+            for (int lut_idx = 0; lut_idx < NFALSE; lut_idx++) {
+                if (i == false_lut[lut_idx]) {
+                    printf("\nT2a ERROR: %d is a false positive!\n", i);
+                    return 1;
+                }
+            }
+            continue;
+        }
+
+        // edges
+        new_j = 0;
+        for (j = 0; j < num_idx; j++) {
+            if ((og_flags[j] & 0x02 != 0) || (og_flags[j] & 0x04 != 0)) {
+                list_a[new_j] = nums[j];
+                j++;
+                list_b[new_j] = nums[j];
+            } else {
+                list_a[new_j] = nums[j];
+                list_b[new_j] = nums[j];
+            }
+            new_j++;
+        }
+
+        check = check_series2(list_a, new_j, flags, &nerrs);
+        if (nerrs == 0 && check != 0) {
+            ans2++;
+            printf("\n%3db: %s", i, input_line);
+            for (int lut_idx = 0; lut_idx < NFALSE; lut_idx++) {
+                if (i == false_lut[lut_idx]) {
+                    printf("\nT2b ERROR: %d is a false positive!\n", i);
+                    return 1;
+                }
+            }
+            continue;
+        }
+        check = check_series2(list_b, new_j, flags, &nerrs);
+        if (nerrs == 0 && check != 0) {
+            ans2++;
+            printf("\n%3db: %s", i, input_line);
+            for (int lut_idx = 0; lut_idx < NFALSE; lut_idx++) {
+                if (i == false_lut[lut_idx]) {
+                    printf("\nT2b ERROR: %d is a false positive!\n", i);
+                    return 1;
+                }
+            }
+            continue;
+        }
+
+        // direction
+        new_j = 0;
+        int diffdir;
+        for (j = 0; j < num_idx; j++) {
+            if (j+1 < num_idx) {
+                diffdir = nums[j] - nums[j+1];
+                if ((diffdir < 0 && og_check == 1) || (diffdir > 0 && og_check == -1)) {
+                    list_a[new_j] = nums[j];
+                    new_j++;
+                    j += 2;
+                    if (j >= num_idx) {
+                        break;
+                    }
+                    list_a[new_j] = nums[j];
+                } else {
+                    list_a[new_j] = nums[j];
+                }
+            } else {
+                list_a[new_j] = nums[j];
+            }
+            new_j++;
+        }
+
+        check = check_series2(list_a, new_j, flags, &nerrs);
+        if (nerrs == 0 && check != 0) {
+            ans2++;
+            printf("\n%3dc: %s", i, input_line);
+            for (int lut_idx = 0; lut_idx < NFALSE; lut_idx++) {
+                if (i == false_lut[lut_idx]) {
+                    printf("\nT2c ERROR: %d is a false positive!\n", i);
+                    return 1;
+                }
+            }
+            continue;
+        }
 
         //printf("\n%3d: ", i);
-        if (check_series(list_a, num_idx-1, err_list, 0) == 0 || check_series(list_b, num_idx-1, err_list, 0) == 0) {
+        /* if (check_series(list_a, num_idx-1, err_list, 0) == 0 || check_series(list_b, num_idx-1, err_list, 0) == 0) {
             ans2++;
-            /* printf("\n%d,", i);
-            for (j=0; j<num_idx; j++) {
-                printf("%d,", err_list[j]);
-            } */
-        } else {
-            /* printf("\n%d,", i);
+            printf("\n%d,", i);
             for (j=0; j<num_idx; j++) {
                 printf("%d,", err_list[j]);
             }
-            printf("\033[1;0m"); */
-        }
+        } else {
+            printf("\n%d,", i);
+            for (j=0; j<num_idx; j++) {
+                printf("%d,", err_list[j]);
+            }
+            printf("\033[1;0m");
+        } */
     }
     fclose(fptr);
 
