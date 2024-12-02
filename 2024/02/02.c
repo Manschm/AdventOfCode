@@ -12,8 +12,11 @@
 #define NLINES 1000
 #define LINELEN 30
 
-int check_series(int* series, int length);
+int check_series(int* series, int length, int* err_series);
 
+int err_list[8];
+int list_a[8];
+int list_b[8];
 
 int main() {
     FILE *fptr;
@@ -25,7 +28,8 @@ int main() {
     }
 
     char input_line[LINELEN];
-    int ans = 0;
+    int ans1 = 0;
+    int ans2 = 0;
 
     for (int i = 0; i < NLINES; i++) {
         fgets(input_line, LINELEN, fptr);
@@ -37,7 +41,6 @@ int main() {
         int num;
         int nums[8] = {0};
 
-        //printf("%3d: ", i);
         int j = 0;
         nums[0] = 100;
         while (j < LINELEN) {
@@ -56,6 +59,9 @@ int main() {
                     continue;
                 }
 
+                nums[num_idx] = num;
+                num_idx++;
+
                 if (c == '\n' || c == '\0') {
                     break;
                 }
@@ -72,54 +78,80 @@ int main() {
             break;
         }
 
-        int errs = check_series(nums, num_idx);
+        int errs = check_series(nums, num_idx, err_list);
         if (errs == 0) {
-            ans++;
+            ans1++;
             continue;
+
         } else if (errs > 1) {
             continue;
         }
 
-        int old_diff = 0;
-        for (int i=1; i<num_idx; i++) {
-            int diff = nums[i-1] - nums[i];
-            int diffdir = (diff > 0) - (diff < 0);
- 
-            if (i == 1) {
-                old_diff = diffdir;
-            }
+        /* printf("\n%d,", i);
+        for (j=0; j<num_idx; j++) {
+            printf("%d,", err_list[j]);
+        } */
 
-            if (diff == 0 || diff < -3 || diff > 3 || old_diff != diffdir) {
-                nerr++;
-                if (err_idx > 0 && i - err_idx == 1) {
-                    nerr--;
-                } else {
-                    err_idx = i;
+        
+        int new_j = 0;
+        for (j=0; j<num_idx; j++) {
+            if (err_list[j] == 1) {
+                if (err_list[j+1] == 1) {
+                    list_a[new_j] = nums[j];
+                    j++;
+                    list_b[new_j] = nums[j];
+                } else if (err_list[j+1] == 2) {
+                    list_a[new_j] = nums[j];
+                    list_b[new_j] = nums[j];
+                    new_j++;
+                    j += 2;
+                    list_a[new_j] = nums[j];
+                    list_b[new_j] = nums[j];
                 }
+            } else {
+                list_a[new_j] = nums[j];
+                list_b[new_j] = nums[j];
+            }
+            new_j++;
+        }
+
+        if (check_series(list_a, num_idx-1, err_list) == 0 || check_series(list_b, num_idx-1, err_list) == 0) {
+            ans2++;
+            /* printf("\n%d,", i);
+            for (j=0; j<num_idx; j++) {
+                printf("%d,", err_list[j]);
+            } */
+        } else {
+            printf("\n%d,", i);
+            for (j=0; j<num_idx; j++) {
+                printf("%d,", err_list[j]);
             }
         }
-        
     }
     fclose(fptr);
 
-    printf("Answer 1: %d\n", ans);
+    printf("\n\nAnswers: T1 = %d, T2 = %d, sum = %d\n", ans1, ans2, ans1+ans2);
 
     return 0;
 }
 
-int check_series(int* series, int length) {
+int check_series(int* series, int length, int* err_series) {
     int old_diff = 0;
     int nerr = 0;
     int err_idx = -1;
+    err_series[0] = 0;
     for (int i=1; i<length; i++) {
         int diff = series[i-1] - series[i];
         int diffdir = (diff > 0) - (diff < 0);
+        err_series[i] = 0;
 
         if (i == 1) {
             old_diff = diffdir;
         }
 
         if (diff == 0 || diff < -3 || diff > 3 || old_diff != diffdir) {
+            err_series[i-1]++;
+            err_series[i]++;
             nerr++;
             if (err_idx > 0 && i - err_idx == 1) {
                 nerr--;
