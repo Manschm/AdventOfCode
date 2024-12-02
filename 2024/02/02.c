@@ -12,7 +12,7 @@
 #define NLINES 1000
 #define LINELEN 30
 
-int check_series(int* series, int length, int* err_series);
+int check_series(int* series, int length, int* err_series, char print);
 
 int err_list[8];
 int list_a[8];
@@ -78,12 +78,14 @@ int main() {
             break;
         }
 
-        int errs = check_series(nums, num_idx, err_list);
+        int errs = check_series(nums, num_idx, err_list, 0);
         if (errs == 0) {
             ans1++;
             continue;
 
         } else if (errs > 1) {
+            printf("\n%3d: ", i);
+            check_series(nums, num_idx, err_list, 1);
             continue;
         }
 
@@ -115,17 +117,19 @@ int main() {
             new_j++;
         }
 
-        if (check_series(list_a, num_idx-1, err_list) == 0 || check_series(list_b, num_idx-1, err_list) == 0) {
+        //printf("\n%3d: ", i);
+        if (check_series(list_a, num_idx-1, err_list, 0) == 0 || check_series(list_b, num_idx-1, err_list, 0) == 0) {
             ans2++;
             /* printf("\n%d,", i);
             for (j=0; j<num_idx; j++) {
                 printf("%d,", err_list[j]);
             } */
         } else {
-            printf("\n%d,", i);
+            /* printf("\n%d,", i);
             for (j=0; j<num_idx; j++) {
                 printf("%d,", err_list[j]);
             }
+            printf("\033[1;0m"); */
         }
     }
     fclose(fptr);
@@ -135,7 +139,8 @@ int main() {
     return 0;
 }
 
-int check_series(int* series, int length, int* err_series) {
+// 49: 30 30 31 32 35 38 41
+int check_series(int* series, int length, int* err_series, char print) {
     int old_diff = 0;
     int nerr = 0;
     int err_idx = -1;
@@ -152,13 +157,27 @@ int check_series(int* series, int length, int* err_series) {
         if (diff == 0 || diff < -3 || diff > 3 || old_diff != diffdir) {
             err_series[i-1]++;
             err_series[i]++;
+
+            if (print) {
+                printf("\033[1;31m"); // red
+                printf("%d ", series[i-1]);
+                printf("\033[1;0m");
+            }
+
             nerr++;
             if (err_idx > 0 && i - err_idx == 1) {
                 nerr--;
             } else {
                 err_idx = i;
             }
+        } else {
+            if (print) {
+                printf("%d ", series[i-1]);
+            }
         }
+    }
+    if (print) {
+        printf("%d\t", series[length-1]);
     }
     return nerr;
 }
