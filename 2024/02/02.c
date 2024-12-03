@@ -35,7 +35,7 @@ int main() {
         int digit_count = 0;
         int num_count = 0;
         int num;
-        int nums[8] = {0};
+        int nums[8];
 
         int j = 0;
         while (j < LINELEN) {
@@ -96,7 +96,43 @@ int main() {
             continue;
         }
 
-        printf("%3d: %s", i, input_line);
+        // The Flattener™
+        int jump_count = 0;
+        int over_count = 0;
+        int under_count = 0;
+        int prev_dir = 0;
+        int skip_idx = -1;
+
+        new_num_count = 0;
+        for (int n = 0; n < num_count-1; n++) {
+            if (diff_list[n] > 0) {
+                over_count++;
+                if (diff_list[n] > 3) {
+                    if (prev_dir != -1) {
+                        jump_count++;
+                    }
+                }
+
+            } else if (diff_list[n] < 0) {
+                under_count++;
+                if (diff_list[n] < -3) {
+                    if (prev_dir != 1) {
+                        jump_count++;
+                    }
+                }
+            }
+
+            prev_dir = (diff_list[n] > 0) - (diff_list[n] < 0);
+        }
+
+        if (jump_count > 1) {
+            continue;
+        } else if (skip_count > 1) {
+            printf("%3d: %s", i, input_line);
+
+        }
+
+        //printf("%3d: %s", i, input_line);
 
         
         /* printf("%3d: ", i);
