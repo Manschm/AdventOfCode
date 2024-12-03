@@ -28,6 +28,8 @@ int main() {
     int ans2 = 0;
     int diff_list[7];
     int new_nums[8];
+    int new_nums_alt[8];
+    int err_list[8];
 
     for (int i = 0; i < NLINES; i++) {
         fgets(input_line, LINELEN, fptr);
@@ -71,10 +73,14 @@ int main() {
         }
 
         /* #### Part Two #### */
-        // dedupe
+        int dir = 0;
         for (int i = 0; i < num_count-1; i++) { // calculate diffs
             diff_list[i] = nums[i] - nums[i+1];
+            dir += (diff_list[i] > 0) - (diff_list[i] < 0);
         }
+        dir = (dir > 0) - (dir < 0);
+
+        // dedupe
         int dupes = 0;
         int new_num_count = 1;
         new_nums[0] = nums[0];
@@ -98,15 +104,10 @@ int main() {
 
         // The Flattener™
         int jump_count = 0;
-        int over_count = 0;
-        int under_count = 0;
         int prev_dir = 0;
-        int skip_idx = -1;
 
-        new_num_count = 0;
         for (int n = 0; n < num_count-1; n++) {
             if (diff_list[n] > 0) {
-                over_count++;
                 if (diff_list[n] > 3) {
                     if (prev_dir != -1) {
                         jump_count++;
@@ -114,7 +115,6 @@ int main() {
                 }
 
             } else if (diff_list[n] < 0) {
-                under_count++;
                 if (diff_list[n] < -3) {
                     if (prev_dir != 1) {
                         jump_count++;
@@ -126,11 +126,83 @@ int main() {
         }
 
         if (jump_count > 1) {
+            //printf("%3d: %s", i, input_line);
             continue;
-        } else if (skip_count > 1) {
-            printf("%3d: %s", i, input_line);
-
         }
+
+        // The Enforcer™
+        int dir_count = 0;
+
+        for (int n = 0; n < num_count-1; n++) {
+            if (dir != (diff_list[n] > 0) - (diff_list[n] < 0)) {
+                dir_count++;
+            }
+        }
+
+        if (dir_count > 1) {
+            //printf("%3d: %s", i, input_line);
+            continue;
+        }
+
+        // The Rehibilitator™
+        for (int n = 0; n < num_count; n++) {
+            err_list[n] = 0;
+        }
+        for (int n = 0; n < num_count-1; n++) {
+            if (abs(diff_list[n]) > 3 || dir != (diff_list[n] > 0) - (diff_list[n] < 0)) {
+                err_list[n]++;
+                err_list[n+1]++;
+            }
+        }
+        
+        int one_count = 0;
+        for (int n = 0; n < num_count; n++) {
+            if (err_list[n] == 1) {
+                one_count++;
+            }
+        }
+
+        if (one_count > 2) {
+            continue;
+        }
+
+        new_num_count = 0;
+        for (int n = 0; n < num_count-1; n++) {
+            if (err_list[n] == 1) {
+                if (n == 0 && err_list[n+1] == 1) {
+                    new_nums[new_num_count++] = nums[n++];
+                } else if (n == num_count-2 && err_list[n+1] == 1) {
+                    new_nums[new_num_count++] = nums[n];
+                    break;
+                } else if (err_list[n+1] == 2) {
+                    new_nums[new_num_count++] = nums[n++];
+                    new_nums[new_num_count++] = nums[++n];
+                } else if (n == num_count-2) {
+                    new_nums[new_num_count++] = nums[n];
+                    new_nums[new_num_count++] = nums[n+1];
+                } else {
+                    new_nums[new_num_count] = nums[n];
+                    new_nums_alt[new_num_count] = nums[++n];
+                    new_num_count++;
+                    //printf("%3d: yooo wtf\n", i);
+                }
+            }
+        }
+
+        if (check_series(new_nums, new_num_count)) {
+            //printf("%3d: %s", i, input_line);
+            ans2++;
+            continue;
+        }
+
+        printf("%3d, %d: ", i, num_count);
+        for (int n = 0; n < num_count; n++) {
+            printf("%d ", err_list[n]);
+        }
+        printf("\t%s", input_line);
+
+        
+       
 
         //printf("%3d: %s", i, input_line);
 
