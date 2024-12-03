@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 // in total there are 1000 lines (line 1001 is empty)
 // a line has at max. 8 numbers
@@ -14,10 +13,6 @@
 #define LINELEN 30
 
 int check_series(int* series, int length);
-
-int err_list[8];
-int list_a[8];
-int list_b[8];
 
 int main() {
     FILE *fptr;
@@ -31,6 +26,8 @@ int main() {
     char input_line[LINELEN];
     int ans1 = 0;
     int ans2 = 0;
+    int diff_list[7];
+    int new_nums[8];
 
     for (int i = 0; i < NLINES; i++) {
         fgets(input_line, LINELEN, fptr);
@@ -74,6 +71,41 @@ int main() {
         }
 
         /* #### Part Two #### */
+        // dedupe
+        for (int i = 0; i < num_count-1; i++) { // calculate diffs
+            diff_list[i] = nums[i] - nums[i+1];
+        }
+        int dupes = 0;
+        int new_num_count = 1;
+        new_nums[0] = nums[0];
+        for (int n = 1; n < num_count; n++) {
+            if (diff_list[n-1] == 0) {
+                dupes++;
+            } else {
+                new_nums[new_num_count++] = nums[n];
+            }
+        }
+        if (dupes > 1) {
+            continue;
+        }
+        
+        if (check_series(new_nums, new_num_count)) {
+            ans2++;
+            continue;
+        } else if (dupes != 0) {
+            continue;
+        }
+
+        printf("%3d: %s", i, input_line);
+
+        
+        /* printf("%3d: ", i);
+        for (int n = 0; n < new_num_count; n++) {
+            printf("%d ", new_nums[n]);
+        }
+        printf("\t%s", input_line); */
+        
+
     }
     fclose(fptr);
 
@@ -82,12 +114,14 @@ int main() {
     return 0;
 }
 
+
 int check_series(int* series, int length) {
     int diff;
     int dir = 0;
 
-    for (int i = 0; i < (length-1); i++) {
+    for (int i = 0; i < length-1; i++) {
         diff = series[i] - series[i+1];
+        
         if (diff == 0 || abs(diff) > 3) {
             return 0;
         }
