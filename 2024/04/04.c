@@ -171,12 +171,12 @@ int main() {
 
     // diagonal left-right
     int ans_dlr = 0;
-    for (int start = 139; abs(start) < 140; start--) {
+    for (int start = -139; abs(start) < 140; start++) {
         int row = 0;
         int col = 0;
         if (start > 0)
             col = start;
-        else if (start < 0);
+        else if (start < 0)
             row = abs(start);
 
         state_f = 0;
@@ -247,7 +247,7 @@ int main() {
         int col = 139;
         if (start > 0)
             col = start;
-        else if (start < 0);
+        else if (start < 0)
             row = abs(start);
         
         state_f = 0;
