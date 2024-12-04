@@ -21,11 +21,50 @@ int main() {
     int input_char;
     int ans = 0;
 
+    /* State:
+     * 0: X
+     * 1: M
+     * 2: A
+     * 3: S
+    */
+    int state = 0;
+
+    int i = 0;
     // horizontal, forward
     while ((input_char = fgetc(fptr)) != EOF) {
-        //putchar(input_char);
-
-
+        switch (input_char)
+        {
+        case 'X':
+            state = 1;
+            break;
+            
+        case 'M':
+            if (state == 1)
+                state++;
+            else
+                state = 0;
+            break;
+            
+        case 'A':
+            if (state == 2)
+                state++;
+            else
+                state = 0;
+            break;
+            
+        case 'S':
+            if (state == 3) {
+                ans++;
+                printf("%4d, i: %d\n", ans, i);
+            }
+            state = 0;
+            break;
+        
+        default:
+            state = 0;
+            break;
+        }
+        i++;
     }
     rewind(fptr);
 
