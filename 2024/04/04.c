@@ -45,11 +45,13 @@ int main() {
             char_matrix[row][col] = input_line[col];
         }
     }
-    printf("row: %d, col: %d\n", row, col);
     fclose(fptr);
 
-    // horizontal, forward & backward
+    // horizontal (notepad++: 194 backwards, 213 forwards)
+    int ans_h = 0;
     for (int row = 0; row < FILELEN; row++) {
+        state_f = 0;
+        state_b = 0;
         for (int col = 0; col < FILELEN; col++) {
             switch (char_matrix[row][col])
             {
@@ -57,7 +59,7 @@ int main() {
                 state_f = 1;
 
                 if (state_b == 3)
-                    ans++;
+                    ans_h++;
                 state_b = 0;
 
                 break;
@@ -90,7 +92,7 @@ int main() {
                 
             case 'S':
                 if (state_f == 3)
-                    ans++;
+                    ans_h++;
                 state_f = 0;
 
                 state_b = 1;
@@ -104,88 +106,71 @@ int main() {
             }
         }
     }
-    printf("Horizontal: %d\n", ans);
+    printf("Horizontal: %d\n", ans_h);
 
-    // vertical, forward
-    int ans3 = 0;
+    // vertical
+    int ans_v = 0;
     for (int col = 0; col < FILELEN; col++) {
+        state_f = 0;
+        state_b = 0;
         for (int row = 0; row < FILELEN; row++) {
             switch (char_matrix[row][col])
             {
             case 'X':
-                state = 1;
+                state_f = 1;
+
+                if (state_b == 3)
+                    ans_v++;
+                state_b = 0;
+
                 break;
                 
             case 'M':
-                if (state == 1)
-                    state++;
+                if (state_f == 1)
+                    state_f++;
                 else
-                    state = 0;
+                    state_f = 0;
+
+                if (state_b == 2)
+                    state_b++;
+                else
+                    state_b = 0;
+
                 break;
                 
             case 'A':
-                if (state == 2)
-                    state++;
+                if (state_f == 2)
+                    state_f++;
                 else
-                    state = 0;
+                    state_f = 0;
+
+                if (state_b == 1)
+                    state_b++;
+                else
+                    state_b = 0;
+
                 break;
                 
             case 'S':
-                if (state == 3) {
-                    ans3++;
-                }
-                state = 0;
+                if (state_f == 3)
+                    ans_v++;
+                state_f = 0;
+
+                state_b = 1;
+
                 break;
             
             default:
-                state = 0;
+                state_f = 0;
+                state_b = 0;
                 break;
             }
         }
     }
-    printf("Vertical forward: %d\n", ans3);
+    printf("Vertical: %d\n", ans_v);
 
-    // vertical, backward
-    int ans4 = 0;
-    for (int col = 0; col < FILELEN; col++) {
-        for (int row = 0; row < FILELEN; row++) {
-            switch (char_matrix[row][col])
-            {
-            case 'S':
-                state = 1;
-                break;
-                
-            case 'A':
-                if (state == 1)
-                    state++;
-                else
-                    state = 0;
-                break;
-                
-            case 'M':
-                if (state == 2)
-                    state++;
-                else
-                    state = 0;
-                break;
-                
-            case 'X':
-                if (state == 3) {
-                    ans4++;
-                }
-                state = 0;
-                break;
-            
-            default:
-                state = 0;
-                break;
-            }
-        }
-    }
-    printf("Vertical backward: %d\n", ans4);
-
-    // diagonal left-right, forward
-    int ans5 = 0;
+    // diagonal left-right
+    int ans_dlr = 0;
     for (int start = 139; abs(start) < 140; start--) {
         int row = 0;
         int col = 0;
@@ -193,38 +178,59 @@ int main() {
             col = start;
         else if (start < 0);
             row = abs(start);
-        
-        state = 0;
+
+        state_f = 0;
+        state_b = 0;
         do {
             switch (char_matrix[row][col])
             {
             case 'X':
-                state = 1;
+                state_f = 1;
+
+                if (state_b == 3)
+                    ans_dlr++;
+                state_b = 0;
+
                 break;
                 
             case 'M':
-                if (state == 1)
-                    state++;
+                if (state_f == 1)
+                    state_f++;
                 else
-                    state = 0;
+                    state_f = 0;
+
+                if (state_b == 2)
+                    state_b++;
+                else
+                    state_b = 0;
+
                 break;
                 
             case 'A':
-                if (state == 2)
-                    state++;
+                if (state_f == 2)
+                    state_f++;
                 else
-                    state = 0;
+                    state_f = 0;
+
+                if (state_b == 1)
+                    state_b++;
+                else
+                    state_b = 0;
+
                 break;
                 
             case 'S':
-                if (state == 3) {
-                    ans5++;
-                }
-                state = 0;
+                if (state_f == 3)
+                    ans_dlr++;
+                state_f = 0;
+
+                state_b = 1;
+
                 break;
             
             default:
-                state = 0;
+                state_f = 0;
+                state_b = 0;
                 break;
             }
 
@@ -232,60 +238,10 @@ int main() {
             col++;
         } while (col < 140 && row < 140);
     }
-    printf("Diagonal left-right forward: %d\n", ans5);
+    printf("Diagonal left-right: %d\n", ans_dlr);
 
-    // diagonal left-right, backward
-    int ans6 = 0;
-    for (int start = 139; abs(start) < 140; start--) {
-        int row = 0;
-        int col = 0;
-        if (start > 0)
-            col = start;
-        else if (start < 0);
-            row = abs(start);
-        
-        state = 0;
-        do {
-            switch (char_matrix[row][col])
-            {
-            case 'S':
-                state = 1;
-                break;
-                
-            case 'A':
-                if (state == 1)
-                    state++;
-                else
-                    state = 0;
-                break;
-                
-            case 'M':
-                if (state == 2)
-                    state++;
-                else
-                    state = 0;
-                break;
-                
-            case 'X':
-                if (state == 3) {
-                    ans6++;
-                }
-                state = 0;
-                break;
-            
-            default:
-                state = 0;
-                break;
-            }
-
-            row++;
-            col++;
-        } while (col < 140 && row < 140);
-    }
-    printf("Diagonal left-right backward: %d\n", ans6);
-
-    // diagonal right-left, forward
-    int ans7 = 0;
+    // diagonal right-left
+    int ans_drl = 0;
     for (int start = 139; abs(start) < 140; start--) {
         int row = 0;
         int col = 139;
@@ -294,37 +250,58 @@ int main() {
         else if (start < 0);
             row = abs(start);
         
-        state = 0;
+        state_f = 0;
+        state_b = 0;
         do {
             switch (char_matrix[row][col])
             {
             case 'X':
-                state = 1;
+                state_f = 1;
+
+                if (state_b == 3)
+                    ans_drl++;
+                state_b = 0;
+
                 break;
                 
             case 'M':
-                if (state == 1)
-                    state++;
+                if (state_f == 1)
+                    state_f++;
                 else
-                    state = 0;
+                    state_f = 0;
+
+                if (state_b == 2)
+                    state_b++;
+                else
+                    state_b = 0;
+
                 break;
                 
             case 'A':
-                if (state == 2)
-                    state++;
+                if (state_f == 2)
+                    state_f++;
                 else
-                    state = 0;
+                    state_f = 0;
+
+                if (state_b == 1)
+                    state_b++;
+                else
+                    state_b = 0;
+
                 break;
                 
             case 'S':
-                if (state == 3) {
-                    ans7++;
-                }
-                state = 0;
+                if (state_f == 3)
+                    ans_drl++;
+                state_f = 0;
+
+                state_b = 1;
+
                 break;
             
             default:
-                state = 0;
+                state_f = 0;
+                state_b = 0;
                 break;
             }
 
@@ -332,60 +309,10 @@ int main() {
             col--;
         } while (col >= 0 && row < 140);
     }
-    printf("Diagonal left-right forward: %d\n", ans7);
-
-    // diagonal left-right, backward
-    int ans8 = 0;
-    for (int start = 139; abs(start) < 140; start--) {
-        int row = 0;
-        int col = 139;
-        if (start > 0)
-            col = start;
-        else if (start < 0);
-            row = abs(start);
-        
-        state = 0;
-        do {
-            switch (char_matrix[row][col])
-            {
-            case 'S':
-                state = 1;
-                break;
-                
-            case 'A':
-                if (state == 1)
-                    state++;
-                else
-                    state = 0;
-                break;
-                
-            case 'M':
-                if (state == 2)
-                    state++;
-                else
-                    state = 0;
-                break;
-                
-            case 'X':
-                if (state == 3) {
-                    ans8++;
-                }
-                state = 0;
-                break;
-            
-            default:
-                state = 0;
-                break;
-            }
-
-            row++;
-            col--;
-        } while (col >= 0 && row < 140);
-    }
-    printf("Diagonal right-left backward: %d\n", ans8);
+    printf("Diagonal left-right: %d\n", ans_drl);
     
 
-    printf("\n\nAnswers: %d\n", ans+ans3+ans4+ans5+ans6+ans7+ans8);
+    printf("\n\nAnswers: %d\n", ans_h+ans_v+ans_dlr+ans_drl);
 
     return 0;
 }
