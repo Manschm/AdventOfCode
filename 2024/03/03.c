@@ -41,6 +41,7 @@ int main() {
 
     while ((input_char = fgetc(fptr)) != EOF) {
         //putchar(input_char);
+
         if (state == 0) {
             n1 = -1;
             n2 = -1;
@@ -79,7 +80,7 @@ int main() {
 
         case ',':
             if (state == 5 || state == 4)
-                state++;
+                state = 6;
             else
                 state = 0;
             break;
@@ -97,7 +98,7 @@ int main() {
             break;
 
         default:
-            if ((state == 4 || state == 6) && input_char >= 0x30 && input_char <= 0x39) {
+            if ((state == 4 || state == 6) && (input_char >= 0x30) && (input_char <= 0x39)) {
                 if (state == 4) {
                     if (n1 < 0) {
                         n1 = 0;
