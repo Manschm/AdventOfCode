@@ -21,11 +21,11 @@ int main() {
         return 1; // file doesn't exist
     }
     
-    char input_char;
+    int input_char;
     int ans;
 
-    while (input_char = fgetc(fptr) != EOF) {
-
+    while ((input_char = fgetc(fptr)) != EOF) {
+        putchar(input_char);
     }
     fclose(fptr);
 
