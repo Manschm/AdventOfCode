@@ -167,30 +167,30 @@ int main() {
         }
 
         new_num_count = 0;
-        for (int n = 0; n < num_count-1; n++) {
-            if (err_list[n] == 1) {
-                if (n == 0 && err_list[n+1] == 1) {
-                    new_nums[new_num_count++] = nums[n++];
-                } else if (n == num_count-2 && err_list[n+1] == 1) {
-                    new_nums[new_num_count++] = nums[n];
-                    break;
-                } else if (err_list[n+1] == 2) {
-                    new_nums[new_num_count++] = nums[n++];
-                    new_nums[new_num_count++] = nums[++n];
-                } else if (n == num_count-2) {
-                    new_nums[new_num_count++] = nums[n];
-                    new_nums[new_num_count++] = nums[n+1];
-                } else {
-                    new_nums[new_num_count] = nums[n];
-                    new_nums_alt[new_num_count] = nums[++n];
-                    new_num_count++;
-                    //printf("%3d: yooo wtf\n", i);
-                }
+        for (int n = 0; n < num_count; n++) {
+            if (n == 0 && err_list[0] && err_list[1] != 2) {    // skip first one
+                continue;
+            } else if (err_list[n] == 2) {  // skip any 2's
+                continue;
+            } else if (n == num_count-1 && err_list[n-1] == 2) {   // skip last one if prev. one was a 2
+                continue;
+            } else if (err_list[n] == 1 && err_list[n-1] == 0) {
+                new_nums[new_num_count] = nums[n];
+                new_nums_alt[new_num_count] = nums[++n];
+            } else {
+                new_nums[new_num_count] = nums[n];
+                new_nums_alt[new_num_count] = nums[n];
             }
+            new_num_count++;
         }
 
-        if (check_series(new_nums, new_num_count)) {
+        if (check_series(new_nums, new_num_count) || check_series(new_nums_alt, new_num_count)) {
             //printf("%3d: %s", i, input_line);
+            /* printf("%3d, %d: ", i, num_count);
+            for (int n = 0; n < num_count; n++) {
+                printf("%d ", err_list[n]);
+            }
+            printf("\t%s", input_line); */
             ans2++;
             continue;
         }
