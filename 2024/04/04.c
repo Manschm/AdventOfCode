@@ -19,7 +19,6 @@ int main() {
     }
     
     int input_char;
-    int ans = 0;
 
     /* State:
      * 0: X
@@ -29,7 +28,7 @@ int main() {
     */
     int state = 0;
 
-    int i = 0;
+    int ans1 = 0;
     // horizontal, forward
     while ((input_char = fgetc(fptr)) != EOF) {
         switch (input_char)
@@ -54,8 +53,47 @@ int main() {
             
         case 'S':
             if (state == 3) {
-                ans++;
-                printf("%4d, i: %d\n", ans, i);
+                ans1++;
+            }
+            state = 0;
+            break;
+        
+        default:
+            state = 0;
+            break;
+        }
+    }
+    rewind(fptr);
+    printf("Horizontal forward: %d\n", ans1);
+
+    int i = 0;
+    int ans2 = 0;
+    // horizontal, backward
+    while ((input_char = fgetc(fptr)) != EOF) {
+                switch (input_char)
+        {
+        case 'S':
+            state = 1;
+            break;
+            
+        case 'A':
+            if (state == 1)
+                state++;
+            else
+                state = 0;
+            break;
+            
+        case 'M':
+            if (state == 2)
+                state++;
+            else
+                state = 0;
+            break;
+            
+        case 'X':
+            if (state == 3) {
+                ans2++;
+                printf("%4d, i: %d\n", ans2, i);
             }
             state = 0;
             break;
@@ -67,14 +105,7 @@ int main() {
         i++;
     }
     rewind(fptr);
-
-    // horizontal, backward
-    while ((input_char = fgetc(fptr)) != EOF) {
-        //putchar(input_char);
-
-
-    }
-    rewind(fptr);
+    printf("Horizontal backwards: %d\n", ans2);
 
     // vertical, forward
     while ((input_char = fgetc(fptr)) != EOF) {
@@ -126,6 +157,7 @@ int main() {
     
     fclose(fptr);
 
+    int ans = 0;
     printf("\n\nAnswers: %d\n", ans);
 
     return 0;
