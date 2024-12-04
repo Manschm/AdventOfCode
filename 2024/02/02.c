@@ -1,4 +1,4 @@
-/* Advent of Code - Day 01
+/* Advent of Code - Day 02
 */
 
 #include <stdio.h>
