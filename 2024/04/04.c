@@ -9,6 +9,9 @@
 // every complete XMAS combination must be counted
 // the combination can be horizontal, vertical, diagonal, and backwards
 #define LINELEN 150
+#define FILELEN 140
+
+char char_matrix[140][140];
 
 int main() {
     FILE *fptr;
@@ -29,8 +32,8 @@ int main() {
     */
     int state = 0;
 
-    int ans1 = 0;
     // horizontal, forward
+    int ans1 = 0;
     while ((input_char = fgetc(fptr)) != EOF) {
         switch (input_char)
         {
@@ -67,8 +70,8 @@ int main() {
     rewind(fptr);
     printf("Horizontal forward: %d\n", ans1);
 
-    int ans2 = 0;
     // horizontal, backward
+    int ans2 = 0;
     while ((input_char = fgetc(fptr)) != EOF) {
         switch (input_char)
         {
@@ -103,30 +106,92 @@ int main() {
         }
     }
     rewind(fptr);
-    printf("Horizontal backwards: %d\n", ans2);
+    printf("Horizontal backward: %d\n", ans2);
 
     char input_line[LINELEN];
-    char* input_data = calloc(1, sizeof(input_line));
-    for (int i = 0; fgets(input_line, LINELEN, fptr) != EOF; i++) {
-
+    for (int row = 0; fgets(input_line, LINELEN, fptr) != NULL; row++) {
+        for (int col = 0; input_line[col] != '\n' && input_line[col] != '\0'; col++) {
+            char_matrix[row][col] = input_line[col];
+        }
     }
-
 
     // vertical, forward
-    while ((input_char = fgetc(fptr)) != EOF) {
-        //putchar(input_char);
-
-
+    int ans3 = 0;
+    for (int col = 0; col < FILELEN; col++) {
+        for (int row = 0; row < FILELEN; row++) {
+            switch (char_matrix[row][col])
+            {
+            case 'X':
+                state = 1;
+                break;
+                
+            case 'M':
+                if (state == 1)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'A':
+                if (state == 2)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'S':
+                if (state == 3) {
+                    ans3++;
+                }
+                state = 0;
+                break;
+            
+            default:
+                state = 0;
+                break;
+            }
+        }
     }
-    rewind(fptr);
+    printf("Vertical forward: %d\n", ans3);
 
     // vertical, backward
-    while ((input_char = fgetc(fptr)) != EOF) {
-        //putchar(input_char);
-
-
+    int ans4 = 0;
+    for (int col = 0; col < FILELEN; col++) {
+        for (int row = 0; row < FILELEN; row++) {
+            switch (char_matrix[row][col])
+            {
+            case 'S':
+                state = 1;
+                break;
+                
+            case 'A':
+                if (state == 1)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'M':
+                if (state == 2)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'X':
+                if (state == 3) {
+                    ans4++;
+                }
+                state = 0;
+                break;
+            
+            default:
+                state = 0;
+                break;
+            }
+        }
     }
-    rewind(fptr);
+    printf("Vertical backward: %d\n", ans4);
 
     // diagonal left-right, forward
     while ((input_char = fgetc(fptr)) != EOF) {
