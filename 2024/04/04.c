@@ -35,8 +35,6 @@ int main() {
     int state_f = 0;
     int state_b = 0;
 
-    int state = 0; //TODO: remove
-
     // create matrix
     char input_line[LINELEN];
     int row, col;
@@ -242,7 +240,7 @@ int main() {
 
     // diagonal right-left
     int ans_drl = 0;
-    for (int start = 139; abs(start) < 140; start--) {
+    for (int start = -139; abs(start) < 140; start++) {
         int row = 0;
         int col = 139;
         if (start > 0)
@@ -309,10 +307,78 @@ int main() {
             col--;
         } while (col >= 0 && row < 140);
     }
-    printf("Diagonal left-right: %d\n", ans_drl);
+    printf("Diagonal right-left: %d\n", ans_drl);
     
-
     printf("\n\nAnswers: %d\n", ans_h+ans_v+ans_dlr+ans_drl);
+
+    // new approach
+    for (int row = 0; row < FILELEN; row++) {
+        for (int col = 0; col < FILELEN; col++) {
+            if (char_matrix[row][col] == 'X') {
+                // forward
+                if (char_matrix[row][col+1] == 'M' &&
+                    char_matrix[row][col+2] == 'A' &&
+                    char_matrix[row][col+3] == 'S' &&
+                    col < FILELEN-3)
+                    ans++;
+                
+                // back
+                if (char_matrix[row][col-1] == 'M' &&
+                    char_matrix[row][col-2] == 'A' &&
+                    char_matrix[row][col-3] == 'S' &&
+                    col >= 3)
+                    ans++;
+
+                // up
+                if (char_matrix[row+1][col] == 'M' &&
+                    char_matrix[row+2][col] == 'A' &&
+                    char_matrix[row+3][col] == 'S' &&
+                    row < FILELEN-3)
+                    ans++;
+                
+                // down
+                if (char_matrix[row-1][col] == 'M' &&
+                    char_matrix[row-2][col] == 'A' &&
+                    char_matrix[row-3][col] == 'S' &&
+                    row >= 3)
+                    ans++;
+
+                // north east
+                if (char_matrix[row-1][col+1] == 'M' &&
+                    char_matrix[row-2][col+2] == 'A' &&
+                    char_matrix[row-3][col+3] == 'S' &&
+                    row >= 3 &&
+                    col < FILELEN-3)
+                    ans++;
+
+                // south east
+                if (char_matrix[row+1][col+1] == 'M' &&
+                    char_matrix[row+2][col+2] == 'A' &&
+                    char_matrix[row+3][col+3] == 'S' &&
+                    row < FILELEN-3 &&
+                    col < FILELEN-3)
+                    ans++;
+
+                // south west
+                if (char_matrix[row+1][col-1] == 'M' &&
+                    char_matrix[row+2][col-2] == 'A' &&
+                    char_matrix[row+3][col-3] == 'S' &&
+                    row < FILELEN-3 &&
+                    col >= 3)
+                    ans++;
+
+                // north west
+                if (char_matrix[row-1][col-1] == 'M' &&
+                    char_matrix[row-2][col-2] == 'A' &&
+                    char_matrix[row-3][col-3] == 'S' &&
+                    row >= 3 &&
+                    col >= 3)
+                    ans++;
+            }
+        }
+    }
+    
+    printf("\n\nAnswer: %d\n", ans); // correct one
 
     return 0;
 }
