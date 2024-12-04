@@ -114,6 +114,7 @@ int main() {
             char_matrix[row][col] = input_line[col];
         }
     }
+    fclose(fptr);
 
     // vertical, forward
     int ans3 = 0;
@@ -194,41 +195,207 @@ int main() {
     printf("Vertical backward: %d\n", ans4);
 
     // diagonal left-right, forward
-    while ((input_char = fgetc(fptr)) != EOF) {
-        //putchar(input_char);
+    int ans5 = 0;
+    for (int start = 139; abs(start) < 140; start--) {
+        int row = 0;
+        int col = 0;
+        if (start > 0)
+            col = start;
+        else if (start < 0);
+            row = abs(start);
+        
+        state = 0;
+        do {
+            switch (char_matrix[row][col])
+            {
+            case 'X':
+                state = 1;
+                break;
+                
+            case 'M':
+                if (state == 1)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'A':
+                if (state == 2)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'S':
+                if (state == 3) {
+                    ans5++;
+                }
+                state = 0;
+                break;
+            
+            default:
+                state = 0;
+                break;
+            }
 
-
+            row++;
+            col++;
+        } while (col < 140 && row < 140);
     }
-    rewind(fptr);
+    printf("Diagonal left-right forward: %d\n", ans5);
 
     // diagonal left-right, backward
-    while ((input_char = fgetc(fptr)) != EOF) {
-        //putchar(input_char);
+    int ans6 = 0;
+    for (int start = 139; abs(start) < 140; start--) {
+        int row = 0;
+        int col = 0;
+        if (start > 0)
+            col = start;
+        else if (start < 0);
+            row = abs(start);
+        
+        state = 0;
+        do {
+            switch (char_matrix[row][col])
+            {
+            case 'S':
+                state = 1;
+                break;
+                
+            case 'A':
+                if (state == 1)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'M':
+                if (state == 2)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'X':
+                if (state == 3) {
+                    ans6++;
+                }
+                state = 0;
+                break;
+            
+            default:
+                state = 0;
+                break;
+            }
 
-
+            row++;
+            col++;
+        } while (col < 140 && row < 140);
     }
-    rewind(fptr);
+    printf("Diagonal left-right backward: %d\n", ans6);
 
     // diagonal right-left, forward
-    while ((input_char = fgetc(fptr)) != EOF) {
-        //putchar(input_char);
+    int ans7 = 0;
+    for (int start = 139; abs(start) < 140; start--) {
+        int row = 0;
+        int col = 139;
+        if (start > 0)
+            col = start;
+        else if (start < 0);
+            row = abs(start);
+        
+        state = 0;
+        do {
+            switch (char_matrix[row][col])
+            {
+            case 'X':
+                state = 1;
+                break;
+                
+            case 'M':
+                if (state == 1)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'A':
+                if (state == 2)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'S':
+                if (state == 3) {
+                    ans7++;
+                }
+                state = 0;
+                break;
+            
+            default:
+                state = 0;
+                break;
+            }
 
-
+            row++;
+            col--;
+        } while (col >= 0 && row < 140);
     }
-    rewind(fptr);
+    printf("Diagonal left-right forward: %d\n", ans7);
 
-    // diagonal right-left, backward
-    while ((input_char = fgetc(fptr)) != EOF) {
-        //putchar(input_char);
+    // diagonal left-right, backward
+    int ans8 = 0;
+    for (int start = 139; abs(start) < 140; start--) {
+        int row = 0;
+        int col = 139;
+        if (start > 0)
+            col = start;
+        else if (start < 0);
+            row = abs(start);
+        
+        state = 0;
+        do {
+            switch (char_matrix[row][col])
+            {
+            case 'S':
+                state = 1;
+                break;
+                
+            case 'A':
+                if (state == 1)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'M':
+                if (state == 2)
+                    state++;
+                else
+                    state = 0;
+                break;
+                
+            case 'X':
+                if (state == 3) {
+                    ans8++;
+                }
+                state = 0;
+                break;
+            
+            default:
+                state = 0;
+                break;
+            }
 
-
+            row++;
+            col--;
+        } while (col >= 0 && row < 140);
     }
-    rewind(fptr);
+    printf("Diagonal right-left backward: %d\n", ans8);
     
-    fclose(fptr);
 
-    int ans = 0;
-    printf("\n\nAnswers: %d\n", ans);
+    printf("\n\nAnswers: %d\n", ans1+ans2+ans3+ans4+ans5+ans6+ans7+ans8);
 
     return 0;
 }
