@@ -8,6 +8,7 @@
 // input contains only letter X, M, A, and S
 // every complete XMAS combination must be counted
 // the combination can be horizontal, vertical, diagonal, and backwards
+#define LINELEN 150
 
 int main() {
     FILE *fptr;
@@ -66,11 +67,10 @@ int main() {
     rewind(fptr);
     printf("Horizontal forward: %d\n", ans1);
 
-    int i = 0;
     int ans2 = 0;
     // horizontal, backward
     while ((input_char = fgetc(fptr)) != EOF) {
-                switch (input_char)
+        switch (input_char)
         {
         case 'S':
             state = 1;
@@ -93,7 +93,6 @@ int main() {
         case 'X':
             if (state == 3) {
                 ans2++;
-                printf("%4d, i: %d\n", ans2, i);
             }
             state = 0;
             break;
@@ -102,10 +101,16 @@ int main() {
             state = 0;
             break;
         }
-        i++;
     }
     rewind(fptr);
     printf("Horizontal backwards: %d\n", ans2);
+
+    char input_line[LINELEN];
+    char* input_data = calloc(1, sizeof(input_line));
+    for (int i = 0; fgets(input_line, LINELEN, fptr) != EOF; i++) {
+
+    }
+
 
     // vertical, forward
     while ((input_char = fgetc(fptr)) != EOF) {
