@@ -30,10 +30,10 @@ int main() {
 
     int ans = 0;
     char input_line[LINELEN];
-
-    // input exploration
-    int rule_count;
+    
     int num_count = 0;
+    // input exploration
+    /* int rule_count;
     int prev_num = 0;
     for (rule_count = 0; fgets(input_line, LINELEN, fptr) != NULL && input_line[0] != '\n'; rule_count++) {
         int num = (input_line[0] - 0x30) * 10 + (input_line[1] - 0x30);
@@ -43,7 +43,7 @@ int main() {
         }
     }
     rewind(fptr);
-    printf("%d rules in total and %d different X's\n", rule_count, num_count);
+    printf("%d rules in total and %d different X's\n", rule_count, num_count); */
 
     // rule LUT
     unsigned char rules[99-10][99-10] = {0};
@@ -70,7 +70,7 @@ int main() {
 
             for (int k = num_count-1; k >= 0; k--) {
                 if (rules[num-10][nums[k]-10]) {
-                    //printf("line %d is invalid because of rule %d|%d\n", i+2+NRULES, num, nums[k]);
+                    printf("invalid line: %4d --> rule %2d|%2d\n", i+2+NRULES, num, nums[k]);
                     valid = 0;
                 }
             }
@@ -90,7 +90,7 @@ int main() {
     
     printf("\n\nAnswer: %d\n", ans);
     // 3334 too low
-    // 3248 too low 
+    // 3248 too low
 
     return 0;
 }
