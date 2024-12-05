@@ -33,6 +33,7 @@ int main() {
     int ans1 = 0;
     int ans2 = 0;
     char input_line[LINELEN];
+    int timeout_count = 0;
     
     int num_count = 0;
     // input exploration
@@ -76,29 +77,50 @@ int main() {
 
             for (int k = num_count-1; k >= 0; k--) {
                 if (rules[num-10][nums[k]-10]) {
-                    printf("invalid line: %4d --> rule %2d|%2d\n", i+2+NRULES, num, nums[k]);
+                    //printf("invalid line: %4d --> rule %2d|%2d\n", i+2+NRULES, num, nums[k]);
                     valid = 0;
-                    swap(&nums[num_count], &nums[k]);
-                    //goto gocheck;
                 }
             }
             num_count++;
             if (input_line[j+2] == '\n')
                 break;
         }
-        //gocheck:
         if (valid) {
             printf("%d numbers on line %d, middle number is %d\n", num_count, i+2+NRULES, nums[num_count/2]);
             ans1 += nums[num_count/2];
+            continue;
+        }
+
+        int timeout = 0;
+        int timeout_max = 5000;
+        for (int j = 0; j < num_count && timeout < timeout_max; j++) {
+            for (int k = j+1; k < num_count; k++) {
+                if (rules[nums[j]][nums[k]]) { // j must be before k
+                    swap(&nums[j], &nums[k]);
+                    j = 0;
+                    break;
+                }
+            }
+            timeout++;
+        }
+        if (timeout >= timeout_max-2) {
+            timeout_count++;
         } else {
             ans2 += nums[num_count/2];
         }
+
+        printf("%4d, %4d: ", i+2+NRULES, timeout);
+        for (int j = 0; j < num_count; j++) {
+            printf("%2d ", nums[j]);
+        }
+        printf("\n");
         
     }
     fclose(fptr);
 
     printf("\n\nAnswer 1: %d\n", ans1);
     printf("\n\nAnswer 2: %d\n", ans2);
+    printf("%4d timeouts occured\n", timeout_count);
 
     return 0;
 }
