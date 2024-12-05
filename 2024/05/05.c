@@ -95,9 +95,11 @@ int main() {
         int timeout_max = 8000;
         for (int j = 0; j < num_count && timeout < timeout_max; j++) {
             for (int k = j+1; k < num_count; k++) {
-                if (rules[nums[j]-10][nums[k]-10]) { // j must be before k
+                int x = nums[k];
+                int y = nums[j];
+                if (rules[nums[k]-10][nums[j]-10]) { // j must be before k
                     swap(&nums[k-1], &nums[k]);
-                    j = 0;
+                    j = -1;
                     break;
                 }
             }
