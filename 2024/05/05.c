@@ -16,8 +16,7 @@
 // check which lines of part two are correct according to the ordering rules from part 1
 // get the middle number of each correct line and sum them
 #define LINELEN 150
-//1176
-#define NRULES 21 
+#define NRULES 1176
 #define NXS 72
 
 int main() {
@@ -73,12 +72,14 @@ int main() {
                 if (rules[num-10][nums[k]-10]) {
                     printf("invalid line: %4d --> rule %2d|%2d\n", i+2+NRULES, num, nums[k]);
                     valid = 0;
+                    goto gocheck;
                 }
             }
             num_count++;
             if (input_line[j+2] == '\n')
                 break;
         }
+        gocheck:
         if (valid) {
             printf("%d numbers on line %d, middle number is %d\n", num_count, i+2+NRULES, nums[num_count/2]);
             ans += nums[num_count/2];
