@@ -46,12 +46,15 @@ int main() {
     printf("%d rules in total and %d different X's\n", rule_count, num_count); */
 
     // rule LUT
-    unsigned char rules[99-10][99-10] = {0};
+    unsigned char rules[100-10][100-10] = {0};
     for (int i = 0; i < NRULES; i++) {  // every rule is assumed to be unique
         fgets(input_line, LINELEN, fptr);
         int x = (input_line[0] - 0x30) * 10 + (input_line[1] - 0x30);
         int y = (input_line[3] - 0x30) * 10 + (input_line[4] - 0x30);
         rules[x-10][y-10] = 1;
+        if (x == 99 && y == 89) {
+            printf("yo\n");
+        }
     }
 
     // line check
@@ -86,13 +89,10 @@ int main() {
         }
         
     }
-
     fclose(fptr);
 
-    
     printf("\n\nAnswer: %d\n", ans);
-    // 3334 too low
-    // 3248 too low
+
 
     return 0;
 }
