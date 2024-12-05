@@ -57,14 +57,14 @@ int main() {
     // line check
     fgets(input_line, LINELEN, fptr);   // read empty line
 
-    int nums[22];
+    int nums[23];
     int valid;
     for (int i = 0; fgets(input_line, LINELEN, fptr) != NULL; i++) {
         // every line has at max. 68 characters (measured using notepad++)
         // 68/3 = 22.67 --> 23 numbers separated by ',''s max.
         num_count = 0;
         valid = 1;
-        for (int j = 0; input_line[j+2] != '\n'; j+=3) {
+        for (int j = 0; j < 68; j+=3) {
             int num = (input_line[j] - 0x30) * 10 + (input_line[j+1] - 0x30);
             nums[j/3] = num;
 
@@ -75,6 +75,8 @@ int main() {
                 }
             }
             num_count++;
+            if (input_line[j+2] == '\n')
+                break;
         }
         if (valid) {
             printf("%d numbers on line %d, middle number is %d\n", num_count, i+2+NRULES, nums[num_count/2]);
@@ -88,6 +90,7 @@ int main() {
     
     printf("\n\nAnswer: %d\n", ans);
     // 3334 too low
+    // 3248 too low 
 
     return 0;
 }
