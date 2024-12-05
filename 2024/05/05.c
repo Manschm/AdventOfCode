@@ -16,7 +16,8 @@
 // check which lines of part two are correct according to the ordering rules from part 1
 // get the middle number of each correct line and sum them
 #define LINELEN 150
-#define NRULES 1176
+//1176
+#define NRULES 21 
 #define NXS 72
 
 int main() {
