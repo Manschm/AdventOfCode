@@ -19,6 +19,8 @@
 #define NRULES 1176
 #define NXS 72
 
+void swap(int *x, int *y);
+
 int main() {
     FILE *fptr;
     fptr = fopen("input.txt", "r");
@@ -28,7 +30,8 @@ int main() {
         return 1; // file doesn't exist
     }
 
-    int ans = 0;
+    int ans1 = 0;
+    int ans2 = 0;
     char input_line[LINELEN];
     
     int num_count = 0;
@@ -75,24 +78,33 @@ int main() {
                 if (rules[num-10][nums[k]-10]) {
                     printf("invalid line: %4d --> rule %2d|%2d\n", i+2+NRULES, num, nums[k]);
                     valid = 0;
-                    goto gocheck;
+                    swap(&nums[num_count], &nums[k]);
+                    //goto gocheck;
                 }
             }
             num_count++;
             if (input_line[j+2] == '\n')
                 break;
         }
-        gocheck:
+        //gocheck:
         if (valid) {
             printf("%d numbers on line %d, middle number is %d\n", num_count, i+2+NRULES, nums[num_count/2]);
-            ans += nums[num_count/2];
+            ans1 += nums[num_count/2];
+        } else {
+            ans2 += nums[num_count/2];
         }
         
     }
     fclose(fptr);
 
-    printf("\n\nAnswer: %d\n", ans);
-
+    printf("\n\nAnswer 1: %d\n", ans1);
+    printf("\n\nAnswer 2: %d\n", ans2);
 
     return 0;
+}
+
+void swap(int *x, int *y) {
+    int tmp = *x;
+    *x = *y;
+    *y = tmp;
 }
