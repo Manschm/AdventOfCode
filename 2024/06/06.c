@@ -50,7 +50,7 @@ int main() {
     fclose(fptr);
 
     /* #### Part One #### */
-    int ans = 0;
+    int ans = 1;
     int dir = 0; // 0: up, 1: right, 2: down, 3: left
     row = start_row;
     col = start_col;
@@ -99,6 +99,7 @@ int main() {
 int check_map(char* input) {
     switch (*input)
     {
+    case '^':
     case '.':
         *input = 'X';
         return 1;
