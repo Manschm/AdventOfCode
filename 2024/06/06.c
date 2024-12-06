@@ -52,11 +52,10 @@ int main() {
     fclose(fptr);
 
     /* #### Part One #### */
-    int ans = 1;
+    int ans1 = 1;
     int dir = 0; // 0: up, 1: right, 2: down, 3: left
     row = start_row;
     col = start_col;
-    int old_dir = 0;
     map[row][col] = 'X';
     do {
         switch (dir)
@@ -92,16 +91,71 @@ int main() {
         default:
             break;
         }
-        if (old_dir != dir) {
-            old_dir = dir;
-        }
-        ans += check_map(&map[row][col]);
+        ans1 += check_map(&map[row][col]);
     } while (map[row][col] != '0');
     
-    printf("\n\nAnswer 1: %d\n", ans); // correct one
+    /* #### Part Two #### */
+    int obsticle_activator = 0;
+    int turn_counter = 0;
+    int ans2 = 0;
+    dir = 0;
+    row = start_row;
+    col = start_col;
+    int old_dir = 0;
+    do {
+        if (col != start_col) {
+            obsticle_activator = 1;
+            turn_counter = 0;
+        }
+
+        switch (dir)
+        {
+        case 0:
+            if (map[row-1][col] != '#')
+                row--;
+            else
+                dir = (dir+1) % 4;
+            break;
+
+        case 1:
+            if (map[row][col+1] != '#')
+                col++;
+            else
+                dir = (dir+1) % 4;
+            break;
+
+        case 2:
+            if (map[row+1][col] != '#')
+                row++;
+            else
+                dir = (dir+1) % 4;
+            break;
+
+        case 3:
+            if (map[row][col-1] != '#')
+                col--;
+            else
+                dir = (dir+1) % 4;
+            break;
+        
+        default:
+            break;
+        }
+
+        if (old_dir != dir) {
+            old_dir = dir;
+            turn_counter++;
+        }
+    } while (map[row][col] != '0');
+
+    printf("\n\nAnswer 1: %d\n", ans1);
+    printf("Answer 2: %d\n", ans2);
 
     return 0;
 }
+
+
+int check_move(int* map, int* dir);
 
 int check_map(char* input) {
     switch (*input)
