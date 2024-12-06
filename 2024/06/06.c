@@ -12,8 +12,11 @@
 // repeat until the edge of the map is reached
 // count every unique tile that has been visited
 #define MAPDIM 130
+#define MATDIM MAPDIM+2
 
-char char_matrix[140][140];
+int check_map(char* input, int* dir);
+
+char map[MATDIM][MATDIM];
 
 int main() {
     FILE *fptr;
@@ -24,50 +27,77 @@ int main() {
         return 1; // file doesn't exist
     }
     
-    int input_char;
-    int ans = 0;
+    char input_line[MATDIM];
+    int start_row = 0;
+    int start_col = 0;
     
     // create matrix
-    char input_line[LINELEN];
     int row, col;
-    for (row = 0; fgets(input_line, LINELEN, fptr) != NULL; row++) {
-        for (col = 0; input_line[col] != '\n' && input_line[col] != '\0'; col++) {
-            char_matrix[row][col] = input_line[col];
+    for (row = 0;  row < MATDIM; row++) {
+        fgets(input_line, MATDIM, fptr);
+        for (col = 0; col < MATDIM; col++) {
+            if (row == 0 || row == MATDIM-1 || col == 0 || col == MATDIM-1) {
+                map[row][col] = '0';
+            } else {
+                map[row][col] = input_line[col];
+            }
+            if (map[row][col] == '^') {
+                start_row = row;
+                start_col = col;
+            }
         }
     }
     fclose(fptr);
 
     /* #### Part One #### */
-    for (int row = 0; row < FILELEN; row++) {
-        for (int col = 0; col < FILELEN; col++) {
-            if (char_matrix[row][col] == 'X') {
+    int ans = 0;
+    int dir = 0; // 0: up, 1: right, 2: down, 3: left
+    row = start_row;
+    col = start_col;
+    do {
+        switch (dir)
+        {
+        case 0:
+            row--;
+            break;
 
-            }
+        case 1:
+            col++;
+            break;
+
+        case 2:
+            row++;
+            break;
+
+        case 3:
+            col--;
+            break;
+        
+        default:
+            break;
         }
-    }
+        ans += check_map(&map[row][col], &dir);
+    } while (map[row][col] != 0);
     
     printf("\n\nAnswer 1: %d\n", ans); // correct one
 
-    /* #### Part Two #### */
-    ans = 0;
-    for (int row = 0; row < FILELEN; row++) {
-        for (int col = 0; col < FILELEN; col++) {
-            if (char_matrix[row][col] == 'A') {
-                // north west -> south east
-                if (((char_matrix[row-1][col-1] == 'M' && char_matrix[row+1][col+1] == 'S') ||
-                    (char_matrix[row-1][col-1] == 'S' && char_matrix[row+1][col+1] == 'M')) &&
-                    row >= 1 && row < FILELEN-1 && col >= 1 && col < FILELEN-1)
-                    
-                    // south west -> north east
-                    if (((char_matrix[row+1][col-1] == 'M' && char_matrix[row-1][col+1] == 'S') ||
-                        (char_matrix[row+1][col-1] == 'S' && char_matrix[row-1][col+1] == 'M')) &&
-                        row >= 1 && row < FILELEN-1 && col >= 1 && col < FILELEN-1)
-                        ans++;
-            }
-        }
-    }
-    
-    printf("\n\nAnswer 2: %d\n", ans); // correct one
-
     return 0;
+}
+
+int check_map(char* input, int* dir) {
+    switch (*input)
+    {
+    case '#':
+        *dir = (*dir+1) % 3;
+        return 0;
+
+    case '.':
+        *input = 'X';
+        return 1;
+
+    case 'X':
+    case '0':
+    default:
+        return 0;
+    }
 }
