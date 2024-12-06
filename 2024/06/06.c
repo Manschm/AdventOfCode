@@ -54,6 +54,8 @@ int main() {
     int dir = 0; // 0: up, 1: right, 2: down, 3: left
     row = start_row;
     col = start_col;
+    int old_dir = 0;
+    map[row][col] = 'X';
     do {
         switch (dir)
         {
@@ -87,6 +89,9 @@ int main() {
         
         default:
             break;
+        }
+        if (old_dir != dir) {
+            old_dir = dir;
         }
         ans += check_map(&map[row][col]);
     } while (map[row][col] != '0');
