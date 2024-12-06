@@ -14,7 +14,7 @@
 #define MAPDIM 130
 #define MATDIM MAPDIM+2
 
-int check_map(char* input, int* dir);
+int check_map(char* input);
 
 char map[MATDIM][MATDIM];
 
@@ -58,43 +58,52 @@ int main() {
         switch (dir)
         {
         case 0:
-            row--;
+            if (map[row-1][col] != '#')
+                row--;
+            else
+                dir = (dir+1) % 4;
             break;
 
         case 1:
-            col++;
+            if (map[row][col+1] != '#')
+                col++;
+            else
+                dir = (dir+1) % 4;
             break;
 
         case 2:
-            row++;
+            if (map[row+1][col] != '#')
+                row++;
+            else
+                dir = (dir+1) % 4;
             break;
 
         case 3:
-            col--;
+            if (map[row][col-1] != '#')
+                col--;
+            else
+                dir = (dir+1) % 4;
             break;
         
         default:
             break;
         }
-        ans += check_map(&map[row][col], &dir);
-    } while (map[row][col] != 0);
+        ans += check_map(&map[row][col]);
+    } while (map[row][col] != '0');
     
     printf("\n\nAnswer 1: %d\n", ans); // correct one
 
     return 0;
 }
 
-int check_map(char* input, int* dir) {
+int check_map(char* input) {
     switch (*input)
     {
-    case '#':
-        *dir = (*dir+1) % 3;
-        return 0;
-
     case '.':
         *input = 'X';
         return 1;
 
+    case '#':
     case 'X':
     case '0':
     default:
