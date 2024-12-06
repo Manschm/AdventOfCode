@@ -34,12 +34,14 @@ int main() {
     // create matrix
     int row, col;
     for (row = 0;  row < MATDIM; row++) {
-        fgets(input_line, MATDIM, fptr);
+        if (row != 0 && row != MATDIM-1) {
+            fgets(input_line, MATDIM, fptr);
+        }
         for (col = 0; col < MATDIM; col++) {
             if (row == 0 || row == MATDIM-1 || col == 0 || col == MATDIM-1) {
                 map[row][col] = '0';
             } else {
-                map[row][col] = input_line[col];
+                map[row][col] = input_line[col-1];
             }
             if (map[row][col] == '^') {
                 start_row = row;
